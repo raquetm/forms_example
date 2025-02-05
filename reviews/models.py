@@ -6,6 +6,6 @@ class Review(models.Model):
     review_text = models.TextField(max_length=200)
     rating = models.IntegerField()
 
-class Student(models.Model):
+class Student(models.Model): #esto es para empezar el ejercicio 5.4
     name=models.CharField(max_length=200)
     degree=models.CharField(max_length=100)

@@ -1,116 +1,99 @@
-from django.shortcuts import render
-from django.http import HttpResponseRedirect
-from .forms import ReviewForm
-from .models import Review
-from django.views import View
-from django.views.generic.base import TemplateView
-from django.views.generic import ListView, DetailView
-from django.views.generic.edit import FormView, CreateView
+from django.shortcuts import render  # Función para renderizar plantillas
+from django.http import HttpResponseRedirect  # Para redirigir después de enviar un formulario
+from .forms import ReviewForm  # Importamos el formulario de reseñas
+from .models import Review  # Importamos el modelo de reseñas
+from django.views import View  # Clase base para vistas basadas en clases 
+from django.views.generic.base import TemplateView  # Vista genérica para renderizar plantillas
+from django.views.generic import ListView, DetailView  # Vistas genéricas para listar y detallar objetos
+from django.views.generic.edit import FormView, CreateView  # Vistas genéricas para manejar formularios
 
-class ReviewView(CreateView):
-    Model=Review
-    form_class=ReviewForm
-    template_name="reviews/review.html"
-    success_url="/thank-you"
-
-
-# class ReviewView(FormView):
-#     form_class=ReviewForm
-#     template_name="reviews/review.html"
-#     success_url="/thank-you"
-#     def form_valid(self, form):
-#         form.save()
-#         return super().form_valid(form)
-
+### A) VISTA PARA GESTIONAR LAS RESEÑAS UTILIZANDO CLASES
+## 1.1. PRIMERA FORMA DE DEFINIR LA CLASE ReviewView UTILIZANDO View
 # class ReviewView(View):
 #     def get(self, request):
-#         form = ReviewForm()
-
-#         return render(request, "reviews/review.html", {
-#             "form": form
-#         })
-
+#         form = ReviewForm()  # Se crea un formulario vacío para la reseña
+#         return render(request, "reviews/review.html", {"form": form})  # Se pasa el formulario a la plantilla
 #     def post(self, request):
-#         form = ReviewForm(request.POST)
-
-#         if form.is_valid():
-#             form.save()
-#             return HttpResponseRedirect("/thank-you")
-
-#         return render(request, "reviews/review.html", {
-#             "form": form
-#         })
-
-
+#         form = ReviewForm(request.POST)  # Se llena el formulario con los datos del usuario
+#         if form.is_valid():  # Se valida el formulario
+#             form.save()  # Se guarda la reseña en la base de datos
+#             return HttpResponseRedirect("/thank-you")  # Redirige a la página de agradecimiento
+#         return render(request, "reviews/review.html", {"form": form})  # Si hay errores, se vuelve a mostrar el formulario con mensajes de error
+# # Vista para la página de agradecimiento
 # def thank_you(request):
-#     return render(request, "reviews/thank_you.html")
+#     return render(request, "reviews/thank_you.html")  # Renderiza la página de agradecimiento
 
+## 1.2. FORMA MÁS CORTA UTILIZANDO FormView
+# class ReviewView(FormView):
+#     form_class = ReviewForm  # Se usa el formulario ReviewForm
+#     template_name = "reviews/review.html"  # Plantilla a utilizar
+#     success_url = "/thank-you"  # URL de redirección tras un envío exitoso
+#     def form_valid(self, form):
+#         form.save()  # Guarda la reseña si el formulario es válido
+#         return super().form_valid(form)  # Llama al método padre para continuar con el flujo normal
+
+## 1.3. FORMA MÁS CORTA Y RECOMENDADA UTILIZANDO CreateView
+class ReviewView(CreateView):
+    model = Review  # Especificamos el modelo a utilizar
+    form_class = ReviewForm  # Se usa el formulario ReviewForm
+    template_name = "reviews/review.html"  # Plantilla a utilizar
+    success_url = "/thank-you"  # URL de redirección tras un envío exitoso
+
+## 2. CLASE PARA LA PÁGINA DE AGRADECIMIENTO
 class Thank_you_view(TemplateView):
-    template_name="reviews/thank_you.html"
-
+    template_name = "reviews/thank_you.html"  # Plantilla de agradecimiento
     def get_context_data(self, **kwargs):
-        context=super().get_context_data(**kwargs)
-        context["message"]="This works!"
+        context = super().get_context_data(**kwargs)  # Obtiene el contexto base
+        context["message"] = "This works!ʕ·͡ᴥ·ʔ"  # Agrega un mensaje al contexto
         return context
 
-class ReviewsListView(ListView):
-    template_name="reviews/review_list.html"
-    model=Review
-    context_object_name="reviews"
-
+## 3.1. PRIMERA FORMA DE HACER UNA LISTA DE RESEÑAS UTILIZANDO TemplateView
 # class ReviewsListView(TemplateView):
-#     template_name="reviews/review_list.html"
-
+#     template_name = "reviews/review_list.html"  # Plantilla a utilizar
 #     def get_context_data(self, **kwargs):
-#         context=super().get_context_data(**kwargs)
-#         reviews=Review.objects.all()
-#         context["reviews"]=reviews
+#         context = super().get_context_data(**kwargs)  # Obtiene el contexto base
+#         reviews = Review.objects.all()  # Obtiene todas las reseñas de la base de datos
+#         context["reviews"] = reviews  # Agrega las reseñas al contexto
 #         return context
-class SingleReviewView(DetailView):
-    template_name="reviews/single_review.html"
-    model =Review
 
+## 3.2. FORMA MÁS CORTA UTILIZANDO ListView
+class ReviewsListView(ListView):
+    template_name = "reviews/review_list.html"  # Plantilla a utilizar
+    model = Review  # Especificamos el modelo a listar
+    context_object_name = "reviews"  # Nombre de la variable que contendrá las reseñas en la plantilla
+
+## 4.1. PRIMERA FORMA DE MOSTRAR UNA SOLA RESEÑA UTILIZANDO TemplateView
 # class SingleReviewView(TemplateView):
-#     template_name="reviews/single_review.html"
-
+#     template_name = "reviews/single_review.html"  # Plantilla a utilizar
 #     def get_context_data(self, **kwargs):
-#         context=super().get_context_data(**kwargs)
-#         review_id=kwargs["id"]
-#         selected_review=Review.objects.get(pk=review_id)
-#         context["review"]=selected_review
+#         context = super().get_context_data(**kwargs)  # Obtiene el contexto base
+#         review_id = kwargs["id"]  # Obtiene el ID de la reseña desde la URL
+#         selected_review = Review.objects.get(pk=review_id)  # Obtiene la reseña de la base de datos
+#         context["review"] = selected_review  # Agrega la reseña al contexto
 #         return context
 
-# # Vista para gestionar las reseñas
+## 4.2. FORMA MÁS CORTA UTILIZANDO DetailView
+class SingleReviewView(DetailView):
+    template_name = "reviews/single_review.html"  # Plantilla a utilizar
+    model = Review  # Especificamos el modelo a utilizar
+
+### B) VISTA PARA GESTIONAR LAS RESEÑAS SIN UTILIZAR CLASES 
 # def review(request):
-#     # Verificamos si la solicitud es de tipo POST (cuando el usuario envía el formulario)
-#     if request.method == 'POST':
-#         form = ReviewForm(request.POST)  # Creamos una instancia del formulario con los datos enviados
-
-#         if form.is_valid():  # Verificamos si los datos son válidos según las reglas del formulario
-#             print(form.cleaned_data)  # Imprimimos los datos validados en la consola (opcional)
-
-#             # Creamos una nueva instancia del modelo Review con los datos del formulario
+#     if request.method == 'POST':  # Si la solicitud es POST (se envió un formulario)
+#         form = ReviewForm(request.POST)  # Se llena el formulario con los datos enviados
+#         if form.is_valid():  # Se verifica si los datos son válidos
+#             print(form.cleaned_data)  # Se imprimen los datos limpios (opcional)
 #             review = Review(
 #                 user_name=form.cleaned_data['user_name'],
 #                 review_text=form.cleaned_data['review_text'],
 #                 rating=form.cleaned_data['rating']
-#             )
-#             review.save()  # Guardamos la reseña en la base de datos
-
-#             # Redirigimos al usuario a la página de agradecimiento
-#             return HttpResponseRedirect("/thank_u")
-
+#             )  # Se crea una instancia de la reseña con los datos del formulario
+#             review.save()  # Se guarda la reseña en la base de datos
+#             return HttpResponseRedirect("/thank_u")  # Redirige a la página de agradecimiento
 #     else:
-#         # Si la solicitud es GET (es decir, el usuario solo abre la página), mostramos un formulario vacío
-#         form = ReviewForm()
-    
-#     #Enviámoslle o formulario á plantilla review
-#     #Se o usuario enviou datos ese form vai ter os datos
-#     #Si se carga a páxina por primeira vez ese form está baleiro
-#     # Renderizamos la plantilla 'review.html' enviando el formulario al contexto
-#     return render(request, "reviews/review.html", {"form": form})
+#         form = ReviewForm()  # Si la solicitud es GET, se crea un formulario vacío
+#     return render(request, "reviews/review.html", {"form": form})  # Renderiza la plantilla con el formulario
 
-# # Vista para la página de agradecimiento
+# # Vista para la página de agradecimiento sin necesidad de lógica adicional
 # def thank_u(request):
-#     # Renderizamos la plantilla 'thank_u.html' sin necesidad de enviar datos adicionales
-#     return render(request, "reviews/thank_u.html")
+#     return render(request, "reviews/thank_u.html")  # Renderiza la página de agradecimiento
