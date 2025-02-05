@@ -1,33 +1,17 @@
-{% load static %} 
+{% extends "reviews/base.html" %}
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Review</title>
-    
-    <!-- Enlace al archivo CSS para estilos personalizados -->
-    <link rel="stylesheet" href="{% static 'reviews/styles.css' %}">
-  </head>
-  <body>
-    
-    <!-- Formulario para enviar una reseña -->
-    <form action="/" method="post">
-      {% csrf_token %} <!-- Token de seguridad para prevenir ataques CSRF -->
-      
-      <!-- Recorremos todos los campos del formulario y los mostramos dinámicamente -->
-      {% for field in form %}
-      <div class="form-control {% if field.errors %}errors{% endif %}"> 
-        {{ field.label_tag }}  <!-- Etiqueta del campo (ej. "Nombre") -->
-        {{ field }}  <!-- Campo de entrada (input, textarea, etc.) -->
-        {{ field.errors }}  <!-- Mostramos errores si el campo no es válido -->
+{% block title %}Your Review{% endblock %}
+
+{% block content %}
+  <form action="/" method="POST">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="form-control {% if field.errors %}errors{% endif %}">
+        {{ field.label_tag }}
+        {{ field }}
+        {{ field.errors }}
       </div>
-      {% endfor %}
-      
-      <!-- Botón para enviar el formulario -->
-      <button type="submit">Send</button>
-    </form>
-
-  </body>
-</html>
+    {% endfor %}
+    <button type="submit">Send</button>
+  </form>
+{% endblock %}
