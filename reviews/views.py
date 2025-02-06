@@ -1,11 +1,12 @@
 from django.shortcuts import render  # Función para renderizar plantillas
 from django.http import HttpResponseRedirect  # Para redirigir después de enviar un formulario
-from .forms import ReviewForm  # Importamos el formulario de reseñas
-from .models import Review  # Importamos el modelo de reseñas
+from .forms import ReviewForm, StudentForm  # Importamos el formulario de reseñas y el de estudiantes
+from .models import Review, Student  # Importamos el modelo de reseñas y el modelo de estudiantes
 from django.views import View  # Clase base para vistas basadas en clases 
 from django.views.generic.base import TemplateView  # Vista genérica para renderizar plantillas
-from django.views.generic import ListView, DetailView  # Vistas genéricas para listar y detallar objetos
-from django.views.generic.edit import FormView, CreateView  # Vistas genéricas para manejar formularios
+from django.views.generic import ListView, DetailView, UpdateView  # Vistas genéricas para listar y detallar objetos
+from django.views.generic.edit import FormView, CreateView, DeleteView  # Vistas genéricas para manejar formularios
+from django.urls import reverse_lazy
 
 ### A) VISTA PARA GESTIONAR LAS RESEÑAS UTILIZANDO CLASES
 ## 1.1. PRIMERA FORMA DE DEFINIR LA CLASE ReviewView UTILIZANDO View
@@ -35,7 +36,7 @@ from django.views.generic.edit import FormView, CreateView  # Vistas genéricas 
 ## 1.3. FORMA MÁS CORTA Y RECOMENDADA UTILIZANDO CreateView
 class ReviewView(CreateView):
     model = Review  # Especificamos el modelo a utilizar
-    form_class = ReviewForm  # Se usa el formulario ReviewForm
+    form_class = ReviewForm  # Se usa el formulStudentFormario ReviewForm
     template_name = "reviews/review.html"  # Plantilla a utilizar
     success_url = "/thank-you"  # URL de redirección tras un envío exitoso
 
@@ -97,3 +98,27 @@ class SingleReviewView(DetailView):
 # # Vista para la página de agradecimiento sin necesidad de lógica adicional
 # def thank_u(request):
 #     return render(request, "reviews/thank_u.html")  # Renderiza la página de agradecimiento
+
+### STUDENTS VIEWS
+class StudentCreateView(CreateView):
+    model = Student  # Especificamos el modelo a utilizar
+    form_class = StudentForm  # Se usa el formulario StudentForm
+    template_name = "students/student_form.html"  # Plantilla a utilizar
+    success_url = "/students"  # URL de redirección tras un envío exitoso
+
+class StudentUpdateView(UpdateView):
+    model = Student  # Especificamos el modelo a utilizar
+    form_class = StudentForm  # Se usa el formulario StudentForm
+    template_name = "students/student_form.html"  # Plantilla a utilizar
+    success_url = reverse_lazy("students-list")
+
+class StudentDeleteView(DeleteView):
+    model = Student  # Especificamos el modelo a utilizar
+    template_name = "students/student_confirm_delete.html"  # Plantilla a utilizar
+    success_url = reverse_lazy("students-list")
+
+
+class StudentsListView(ListView):
+    template_name = "students/student_list.html"  # Plantilla correcta para estudiantes
+    model = Student  # Usamos el modelo Student en vez de Review
+    context_object_name = "students"  # Variable correcta en la plantilla

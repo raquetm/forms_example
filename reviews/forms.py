@@ -1,5 +1,5 @@
 from django import forms  # Importamos el módulo forms de Django para crear formularios
-from .models import Review  # Importamos el modelo Review
+from .models import Review, Student  # Importamos el modelo Review y el modelo Student
 
 ### A) PRIMERA FORMA DE DEFINIR EL FORMULARIO UTILIZANDO forms.Form
 # class ReviewForm(forms.Form):
@@ -47,3 +47,8 @@ class ReviewForm(forms.ModelForm):
                 "max_length": "Your review must be shorter than 200 characters (╥﹏╥)"  # Mensaje si la reseña es muy larga
             }
         }
+
+class StudentForm(forms.ModelForm):
+    class Meta:
+        model=Student
+        fields=['name','degree']

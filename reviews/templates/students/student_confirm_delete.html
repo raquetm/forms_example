@@ -1,0 +1,12 @@
+{% extends "students/base_student.html" %}
+
+{% block content %}
+
+  <form method="post">
+      <p>Do you want to delete all the information about <b>{{ object.name }}</b>?</p>
+
+    {% csrf_token %}
+    <button type="submit">Delete</button>
+  </form>
+
+{% endblock %}

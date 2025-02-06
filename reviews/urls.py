@@ -20,4 +20,10 @@ urlpatterns = [
     path('reviews/<int:pk>', views.SingleReviewView.as_view()),  
     # Nueva versión de la ruta para mostrar una sola reseña utilizando DetailView.
     # 'pk' (Primary Key) es el nombre que DetailView espera por defecto para identificar registros.
+
+    #URLS STUDENT
+    path('students/', views.StudentsListView.as_view(), name='students-list'),  # Listado de estudiantes
+    path('student/create/', views.StudentCreateView.as_view(), name='student-create'),  # Crear estudiante
+    path('student/<int:pk>/update/', views.StudentUpdateView.as_view(), name='student-update'),  # Editar estudiante
+    path('student/<int:pk>/delete/', views.StudentDeleteView.as_view(), name='student-delete'),  # Eliminar estudiante
 ]
